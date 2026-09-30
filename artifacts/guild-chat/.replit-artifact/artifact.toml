@@ -1,0 +1,36 @@
+kind = "web"
+previewPath = "/"
+title = "Guild Chat"
+description = "A group-first community chat app where people sign in with unique handles, discover active groups, and talk only within groups they belong to."
+version = "1.0.0"
+id = "artifacts/guild-chat"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21955
+
+[services.development]
+run = "pnpm --filter @workspace/guild-chat run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/guild-chat", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/guild-chat/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21955"
+BASE_PATH = "/"
+
+[[services]]
+name = "worker"
+paths = [ "/guild-api" ]
+localPort = 8787
+
+[services.development]
+run = "pnpm --filter @workspace/guild-chat run dev:worker"
